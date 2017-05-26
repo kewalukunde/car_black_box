@@ -16,8 +16,9 @@ char password[] = "1111";
 /* password enter function */
 int password_enter()
 {
-  		  clear_display;
+		  clear_display;
 		  char enter_pass[] = "    ";
+		  char hiden_pass[] = "    ";
 		  int k = 0;
 		  /* loop to get password */
 		  while (k < 4)
@@ -30,32 +31,52 @@ int password_enter()
 					 /* increment number */
 					 if (key == '1')
 					 {
-								if (enter_pass[k] == ' ')
+								if ((enter_pass[k] == ' ') && (hiden_pass[k] == ' '))
+								{
 										  enter_pass[k] = 47;
+										  hiden_pass[k] = 47;
+								}
 
 								enter_pass[k]++;
-								if (enter_pass[k] == ':')
+								hiden_pass[k]++;
+
+								if ((enter_pass[k] == ':') && (hiden_pass[k] == ':'))
+								{
 										  enter_pass[k] = '0';
+										  hiden_pass[k] = '0';
+								}
 					 }
 					 /* decrement number */
 					 else if (key == '2')
 					 {					
-								if (enter_pass[k] == ' ')
+								if ((enter_pass[k] == ' ') && (hiden_pass[k] == ' '))
+								{
 										  enter_pass[k] = ':';
+										  hiden_pass[k] = ':';
+								}
 
 								enter_pass[k]--;
-								if (enter_pass[k] == 47)
+								hiden_pass[k]--;
+
+								if ((enter_pass[k] == 47) && (hiden_pass[k] == 47))
+								{
 										  enter_pass[k] = '9';
+										  hiden_pass[k] = '9';
+								}
+
 					 }
 					 /* change cursor */
 					 else if (key == '3')	
+					 {
+								enter_pass[k] = '*';
 								k++;
+					 }
 					 if (key == '7')
 								return START_SCREEN;
 		  }	
 
 		  /* if password correct enter into main menu */
-		  if (!strcmp(password,enter_pass))
+		  if (!strcmp(password,hiden_pass))
 					 return MAIN_MENU;
 		  /* if wrong re_enter password */
 		  else 
@@ -87,7 +108,7 @@ int main_menu_func()
 		  else
 					 puts(line2_home," 1) Log *2) Time");
 
-        /* according to selected menu change state */
+		  /* according to selected menu change state */
 		  if ((key == '3') && (!s_select))
 		  {	
 					 clear_display;
@@ -102,15 +123,15 @@ int main_menu_func()
 
 int set_time()
 {
-        char temp_time[] = "    00:00:00    ";
+		  char temp_time[] = "    00:00:00    ";
 		  puts(line1_home,"#   SET TIME   #");
-			
+
 		  k = 4;
 		  while (k < 12)
 		  {
-					 key = scan_matrix_keypad();
 					 delay(650);
-					
+					 key = scan_matrix_keypad();
+
 					 /* incress number */
 					 if (key == '1')
 					 {
@@ -135,7 +156,7 @@ int set_time()
 					 /* back to orevious menu */
 					 if (key == '7')
 								return MAIN_MENU;
-					 
+
 					 puts(line2_home,temp_time);
 					 write_lcd(0xC0+k,CMD_MODE); 
 		  }
@@ -151,11 +172,11 @@ int display_log()
 		  k = 0;
 		  while (log_itr >= 0)
 		  {
-		          puts(line1_home,"N   TIME   G SPD");
+					 puts(line1_home,"N   TIME   G SPD");
 					 puts(line2_home,log[k]);
 					 key = scan_matrix_keypad();
 					 delay(700);
-					
+
 					 /* change log number */
 					 if ((key == '1') && (k < log_itr))
 								k++;
@@ -165,3 +186,24 @@ int display_log()
 								return MAIN_MENU;
 		  }
 }
+
+int store_log()
+{
+		  int p;
+		  if (log_itr == 9)
+					 for(p = 0; p < 9; p++)
+					 {
+								strcpy(log[p],log[p+1]);
+								log[p][0] = ((p+1)% 10) + '0';
+					 }
+
+		  strcpy(log[log_itr],counter);
+		  log[log_itr][0] = ((log_itr+1)% 10) + '0';
+		  puts(line1_home," ERROR OCCURRED  ");
+		  puts(line2_home,log[log_itr]);
+		  if(log_itr < 9)
+					 log_itr++;
+		  delay(2500);
+}
+
+

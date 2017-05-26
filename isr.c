@@ -81,6 +81,7 @@ void interrupt isr(void)
 										  write_internal_eeprom(E_count += 1,log[p][q]);
 					 }
 					 
+					 E_got = 0;
 					 E_time = 0;
 		  }
 }

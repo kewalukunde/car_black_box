@@ -20,7 +20,7 @@ void main()
 		  /* if EEPROM have data copy it */
 		  if (read_internal_eeprom(0x00) != '0')
 		  {
-				    puts(line1_home," READING EEPROM ");
+					 puts(line1_home," READING EEPROM ");
 					 delay(3000);
 					 char str[17];
 					 E_count = 0x00;
@@ -65,12 +65,7 @@ void main()
 					 /* collission make */
 					 else if (key == '8')
 					 {
-								strcpy(log[log_itr],counter);
-								log[log_itr][0] = ((log_itr+1)% 10) + '0';
-								puts(line1_home," ERROR OCCURRED  ");
-								puts(line2_home,log[log_itr]);
-								log_itr++;
-								delay(2500);
+								store_log();
 					 }
 					 else if (state == START_SCREEN)
 								display();
@@ -81,15 +76,14 @@ void main()
 					 else if (state == DISPLAY_TIME)
 								state = set_time();
 
-					 /* speed limit defination */
-					 if (((gear == 1) && (data > 30)) || ((gear == 2)&&(data < 10 || data > 50)) || ((gear == 3)&&(data < 20 || data > 80)) || ((gear == 4)&&(data < 30 && data > 120)))
+					 if (!E_got)
 					 {
-								strcpy(log[log_itr],counter);
-								log[log_itr][0] = ((log_itr+1)% 10) + '0';
-								puts(line1_home," ERROR OCCURRED  ");
-								puts(line2_home,log[log_itr]);
-								log_itr++;
-								delay(2500);
+								E_got = 1;
+								/* speed limit defination */
+								if (((gear == 1) && (data > 30)) || ((gear == 2)&&(data < 10 || data > 50)) || ((gear == 3)&&(data < 20 || data > 80)) || ((gear == 4)&&(data < 30 && data > 120)))
+								{
+										  store_log();
+								}
 					 }
 
 		  }
